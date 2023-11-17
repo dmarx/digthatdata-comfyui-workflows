@@ -12,7 +12,9 @@ To use the techniques described here, the easiest approach is probably to open u
 
 ![base workflow](workflows/base-workflow.png)
 
-This is usually what I start with. The left hand side is a normal text-to-image workflow that generates a batch of images. I use that space to workshop my prompt and other core conditioning and aesthetics. The right hand side is a sequence of AnimateDiff modules that are each disconnected from their respective "latent" inputs. When I'm happy with my prompt and ready to move on to animating, I just close the connection between the reroute nodes to activate the next AD module. Alternatively, if I want to add one of my "secret sauce" tricks, i can copy the nodes in one of the blue groups and add that module in-line to intercept the latents/images before passing them along to the next AD module. Did I mention I generally apply AD multiple times? I usually run at least two or three passes of AD when I use it.
+This is usually what I start with. The left hand side is a normal text-to-image workflow that generates a batch of images. I use that space to workshop my prompt and other core conditioning and aesthetics. The right hand side is a sequence of AnimateDiff modules that are each disconnected from their respective "latent" inputs. When I'm happy with my prompt and ready to move on to animating, I just close the connection between the reroute nodes to activate the next AD module. Alternatively, if I want to add one of my "secret sauce" tricks, i can copy the nodes in one of the blue groups and add that module in-line to intercept the latents/images before passing them along to the next AD module. 
+
+Did I mention I generally apply AD multiple times? I usually run at least two or three passes of AD when I use it. I like to think about denoising diffusion as a kind of generic "decorruption" process. As such, repeatedly applying denoising procedures can be interpreted as a kind of iterative "refinement" of an image. Just like how repeatedly applying denoising steps refines the image, we can repeatedly apply img2img (aka "loopback") to clean up a single image, or even repeatedly apply AnimateDiff to clean up an animation. 
 
 The "bus" nodes used here aren't an intrinsic part of the workflow, I just find them useful for keeping my stuff organized. 
 
@@ -21,3 +23,10 @@ The "bus" nodes used here aren't an intrinsic part of the workflow, I just find 
 ![base workflow](workflows/loop-friendly-vfi.png)
 
 A spectacular trick you can use to make smoother animations is to use frame interpolation (and/or slow down the frame rate in tandem with using VFI to elongate your frame count). I enjoy making short animated loops, which doesn't work well with this approach. Let's say we want to use VFI to interpolate 4 new frames between every frame we generated. Let's say we have a three frame animation, comprised of frames A, B and C. After VFI, we'll have 11 frames: A <4x VFI> B <4xVFI> C. The issue here is that we didn't add frames interpolating from C back to A, so when the video loops it'll seem to accelerate or "jerk" at the loop point. To fix this, we can concatenate the first frame on to the end, giving us the sequence ABCA, perform our interpolation like before, and then just pop off either of the redundant duplicated frames of the animation. Rather than 11 frames, well end up with 15 frames and a smooth loop with no jerkiness from changing frame rates.
+
+## Alternating AD and VFI
+
+![](workflows/ad-refinement-after-vfi.png)
+
+Different AI techniques have different aesthetics. Finishing off a piece with VFI can give it a particular look that might not be desirable or might overwhelm certain aethetics of the animation before it was applied. To overcome this, I sometimes re-encode the animation back into the SD latent after applying VFI, and apply additional AD refinement passes. I've also found that by alternating VFI and AD, I can take a jerky animation and force it be smooth in a way that retains the AD motion aesthetics.
+
