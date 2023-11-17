@@ -41,5 +41,10 @@ I've also found that by alternating VFI and AD, I can take a jerky animation and
 
 Building up workflows progressively with modules like this can leave a confusing tangled web of connections in its wake. I like to use reroutes and "bus" nodes to manage this complexity. Additionally, I will sometimes double up reroutes to create a kind of "latch". If I want to rework the prompt, I can break the connection to downstream nodes while I workshop and iterate. The double reroutes makes it visually very clear to me where these "breaks" are if I have added them and make it hard for me to incorrectly rewire things when I want to resume the downstream processing.
 
+There's a particular feature I described in my baseworkflow that's so far missing here: we added the AD motion module so far upstream, we don't really have an easy way to incorporate a basic text-to-image step for prompt workshopping. As the workflow currently stands, I'd need to unplug and rewire a bunch of stuff from the first bus node to incorporate a change like this. To mitigate this kind of rewiring burden and make it simpler to change/add/remove workflow components on the fly, I try to stick to the following rule: **every bus node is either an IN node or an OUT node**. The issue with that first bus node is that it has both inputs and outputs. Let's segment that into two bus nodes instead of one.
 
+![](workflows/bus-in-out-0.png)
 
+Now, if I want to add components to the workflow -- like a simple text-to-image step before the first round of AnimateDiff -- it's a lot simpler and more modular!
+
+![](workflows/bus-in-out-1.png)
