@@ -30,7 +30,7 @@ A spectacular trick you can use to make smoother animations is to use frame inte
 
 Different AI techniques have different aesthetics. Finishing off a piece with VFI can give it a particular look that might not be desirable or might overwhelm certain aethetics of the animation before it was applied. To overcome this, I sometimes re-encode the animation back into the SD latent after applying VFI, and apply additional AD refinement passes. 
 
-I've also found that by alternating VFI and AD, I can take a jerky animation and force it be smooth in a way that retains the AD motion aesthetics.
+I've also found that by alternating VFI and AD, I can take a jerky animation and force it to be smooth in a way that retains the AD motion aesthetics.
 
 ![](workflows/alternating-ad-and-vfi.png)
 
