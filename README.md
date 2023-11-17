@@ -28,5 +28,18 @@ A spectacular trick you can use to make smoother animations is to use frame inte
 
 ![](workflows/ad-refinement-after-vfi.png)
 
-Different AI techniques have different aesthetics. Finishing off a piece with VFI can give it a particular look that might not be desirable or might overwhelm certain aethetics of the animation before it was applied. To overcome this, I sometimes re-encode the animation back into the SD latent after applying VFI, and apply additional AD refinement passes. I've also found that by alternating VFI and AD, I can take a jerky animation and force it be smooth in a way that retains the AD motion aesthetics.
+Different AI techniques have different aesthetics. Finishing off a piece with VFI can give it a particular look that might not be desirable or might overwhelm certain aethetics of the animation before it was applied. To overcome this, I sometimes re-encode the animation back into the SD latent after applying VFI, and apply additional AD refinement passes. 
+
+I've also found that by alternating VFI and AD, I can take a jerky animation and force it be smooth in a way that retains the AD motion aesthetics.
+
+![](workflows/alternating-ad-and-vfi.png)
+
+
+## Cable Management with Bus Nodes and Reroutes
+
+![](workflows/ad-and-vfi-w-cable-management.png)
+
+Building up workflows progressively with modules like this can leave a confusing tangled web of connections in its wake. I like to use reroutes and "bus" nodes to manage this complexity. Additionally, I will sometimes double up reroutes to create a kind of "latch". If I want to rework the prompt, I can break the connection to downstream nodes while I workshop and iterate. The double reroutes makes it visually very clear to me where these "breaks" are if I have added them and make it hard for me to incorrectly rewire things when I want to resume the downstream processing.
+
+
 
