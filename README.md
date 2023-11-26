@@ -55,3 +55,13 @@ Now, if I want to add components to the workflow -- like a simple text-to-image 
 ![](workflows/svd-outpainting.png)
 
 A few days ago (as of this writing) Stability released two new video models, each of which takes a single image as conditioning input and from that generates 14 or 24 frames of video. This kind of "predict the next thing" procedure is often called an "auto-regressive" process ("regression" is fancy math speak for "prediction"), and is the underlying strategy behind how LLMs are trained to generate text. One might expect then that by taking the last generated output frame, one could just repeat this process to generate an additional batch of video frames. It's often a good idea when applying this kind of procedure to keep all of the settings the same as the original generation. Unfortunately, that doesn't seem to work properly for SVD. I still need to learn more about what's going on under the hood, but my intuition is that it has something to do with how the frames are noised, and by holding on to the same seed the input frame gets re-noised with "last frame" information, and you get a static video as a result. The fix is simple: just make sure to use a different seed across subsequent rounds of video extension. Each seed also imparts different (unpredictable) motion effects, so when I apply this procedure I make sure the new chunk of video is something I like before moving on to the next round of video extension. If I don't like what I see, I just change the seed and try again. 
+
+# Experiments
+
+If it's in this section, it's not necessarily a good idea.
+
+## SVD Double refinement 
+
+![](workflows/svd-double-refinement.png)
+
+Repeatedly decoding and reencoding images through the VAE causes colors to become increasingly saturated. In this experiment, I first generate 14 frames with the base SVD model, then I refine those frames using a second pass with the same seed but reduced denoise (a la animatediff), then I generate and refine another 14 frames, then I attempt to refine the combined 28 frames using the XT model. In this workflow, i repeat this procedure three times for a total of 84 frames. It's entirely possible the XT refinement steps do nothing or even do more harm than good, but the idea was that doing it this way gives me an opportunity to apply further upstream conditioning to the mroe down stream frames. Probably a lot of work for nothing.
